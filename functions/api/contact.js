@@ -80,7 +80,7 @@ export async function onRequestPost(context) {
       `Thank you for getting in touch with RE Finance Studio. I've received your enquiry ` +
       `and will get back to you as soon as I can.\n\n` +
       `In the meantime, if you have anything else to add, just reply to this email.\n\n` +
-      `Warm wishes,\n` +
+      `Thanks,\n` +
       `Rebecca\n` +
       `RE Finance Studio`;
 
@@ -89,9 +89,9 @@ export async function onRequestPost(context) {
         <p>Hi ${escapeHtml(firstName)},</p>
         <p>Thank you for getting in touch with RE Finance Studio. I've received your enquiry and will get back to you as soon as I can.</p>
         <p>In the meantime, if you have anything else you'd like to add, just reply to this email.</p>
-        <p style="margin-top: 24px;">Warm wishes,<br>
-        <strong style="color: #883F39;">Rebecca</strong><br>
-        RE Finance Studio</p>
+        <p style="margin-top: 24px;">Thanks,<br>
+        Rebecca</p>
+        <strong style="color: #883F39;">RE Finance Studio</strong><br>
       </div>`;
 
     await fetch('https://api.resend.com/emails', {
