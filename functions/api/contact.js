@@ -71,6 +71,45 @@ export async function onRequestPost(context) {
       return json({ error: 'Could not send message. Please try again later.' }, 502);
     }
 
+    // Send a confirmation email to the person who filled in the form.
+    // This is best-effort: if it fails, the enquiry to Beck has already
+    // succeeded, so we don't treat the whole submission as failed.
+    const confirmSubject = 'Thanks for getting in touch with RE Finance Studio';
+    const confirmText =
+      `Hi ${firstName},\n\n` +
+      `Thank you for getting in touch with RE Finance Studio. I've received your enquiry ` +
+      `and will get back to you as soon as I can.\n\n` +
+      `In the meantime, if you have anything else to add, just reply to this email.\n\n` +
+      `Warm wishes,\n` +
+      `Rebecca\n` +
+      `RE Finance Studio`;
+
+    const confirmHtml = `
+      <div style="font-family: Arial, sans-serif; color: #3a2e2b; line-height: 1.7; max-width: 540px;">
+        <p>Hi ${escapeHtml(firstName)},</p>
+        <p>Thank you for getting in touch with RE Finance Studio. I've received your enquiry and will get back to you as soon as I can.</p>
+        <p>In the meantime, if you have anything else you'd like to add, just reply to this email.</p>
+        <p style="margin-top: 24px;">Warm wishes,<br>
+        <strong style="color: #883F39;">Rebecca</strong><br>
+        RE Finance Studio</p>
+      </div>`;
+
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        from: `Rebecca at RE Finance Studio <${env.FROM_EMAIL}>`,
+        to: [email],
+        reply_to: env.TO_EMAIL,
+        subject: confirmSubject,
+        text: confirmText,
+        html: confirmHtml
+      })
+    }).catch(err => console.error('Confirmation email error:', err));
+
     return json({ ok: true }, 200);
   } catch (err) {
     console.error('Function error:', err);
